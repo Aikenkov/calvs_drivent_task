@@ -5,12 +5,20 @@ import enrollmentRepository, { CreateEnrollmentParams } from "@/repositories/enr
 import { exclude } from "@/utils/prisma-utils";
 import { Address, Enrollment } from "@prisma/client";
 
-async function getAddressFromCEP() {
-  const result = await request.get("https://viacep.com.br/ws/37440000/json/");
+async function getAddressFromCEP(cep: string) {
+  const result = await request.get(`https://viacep.com.br/ws/${cep}/json/`);
 
   if (!result.data) {
     throw notFoundError();
   }
+
+  return { 
+    logradouro: result.data.logradouro,
+    complemento: result.data.complemento,
+    bairro: result.data.bairro,
+    cidade: result.data.localidade,
+    uf: result.data.uf,
+  };
 }
 
 async function getOneWithAddressByUserId(userId: number): Promise<GetOneWithAddressByUserIdResult> {
