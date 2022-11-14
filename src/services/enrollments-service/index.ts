@@ -4,7 +4,6 @@ import addressRepository, { CreateAddressParams } from "@/repositories/address-r
 import enrollmentRepository, { CreateEnrollmentParams } from "@/repositories/enrollment-repository";
 import { exclude } from "@/utils/prisma-utils";
 import { Address, Enrollment } from "@prisma/client";
-import httpStatus from "http-status";
 
 async function getAddressFromCEP(cep: string) {
   const result = await request.get(`https://viacep.com.br/ws/${cep}/json/`);
