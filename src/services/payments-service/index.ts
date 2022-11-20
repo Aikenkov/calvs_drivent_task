@@ -1,39 +1,27 @@
-import { AddressEnrollment } from "@/protocols";
-import { getAddress } from "@/utils/cep-service";
-import { notFoundError } from "@/errors";
-//import addressRepository, { CreateAddressParams } from "@/repositories/address-repository";
-//import enrollmentRepository, { CreateEnrollmentParams } from "@/repositories/enrollment-repository";
-//import { exclude } from "@/utils/prisma-utils";
-//import { Address, Enrollment } from "@prisma/client";
+import { notFoundError, unauthorizedError } from "@/errors";
+import ticketsRepository from "@/repositories/tickets-repository ";
+import paymentsRepository from "@/repositories/payments-repository ";
+import { Payment } from "@prisma/client";
+import userRepository from "@/repositories/user-repository";
+import { exclude } from "@/utils/prisma-utils";
 
-async function ui(cep: string): Promise<AddressEnrollment> {
-  const result = await getAddress(cep);
-
-  if (!result) {
-    throw notFoundError(); 
+async function getPayment(ticketId: number, userId: number) {
+  const payment = await paymentsRepository.findFirstPayment(ticketId);
+  const ticket = await ticketsRepository.findTicketById(ticketId); 
+  
+  if(!ticket) {
+    throw notFoundError();
   }
 
-  const {
-    bairro,
-    localidade,
-    uf,
-    complemento,
-    logradouro
-  } = result;
+  if(ticket.Enrollment.userId !== userId) {
+    throw unauthorizedError();
+  }
 
-  const address = {
-    bairro,
-    cidade: localidade,
-    uf,
-    complemento,
-    logradouro
-  };
-
-  return address;
+  return payment;
 }
  
 const paymentsService = {
-  ui
+  getPayment
 };
 
 export default paymentsService;
