@@ -15,21 +15,25 @@ export async function getAllTicketTypes(req: AuthenticatedRequest, res: Response
 
 export async function getUserTicket(req: AuthenticatedRequest, res: Response) {
   const { userId } = req;
-  try {
-    const userTickets = await ticketsService.getTicketsByUserId(userId);
 
-    return res.status(httpStatus.OK).send(userTickets);
+  try {
+    const userTicket = await ticketsService.getTicketsByUserId(userId);
+
+    return res.status(httpStatus.OK).send(userTicket);
   } catch (error) {
     return res.sendStatus(httpStatus.NOT_FOUND);
   }
 }
 
-export async function postAllUserTicket(req: AuthenticatedRequest, res: Response) {
+export async function postUserTicket(req: AuthenticatedRequest, res: Response) {
   const { userId } = req;
-  try {
-    const userTickets = await ticketsService.getTicketsByUser(userId);
+  const { ticketTypeId } = req.body;
 
-    return res.status(httpStatus.OK).send(userTickets);
+  try {
+    await ticketsService.createTicket(userId, ticketTypeId);
+    const userTicket = await ticketsService.getTicketsByUserId(userId);
+    
+    return res.status(httpStatus.CREATED).send(userTicket);
   } catch (error) {
     return res.sendStatus(httpStatus.NOT_FOUND);
   }

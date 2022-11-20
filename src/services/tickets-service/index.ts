@@ -29,9 +29,19 @@ async function getTicketsByUserId(userId: number): Promise<TicketsEntity> {
   return exclude(userTickets, "Enrollment");
 }
 
+async function createTicket(userId: number, ticketTypeId: number) {
+  checkRegistration(userId);
+  const enrollment = await enrollmentRepository.findWithAddressByUserId(userId);
+
+  if (!enrollment) throw notFoundError();
+
+  await ticketsRepository.createTicket(enrollment.id, ticketTypeId);
+}
+
 const ticketsService = {
   getTicketTypes,
-  getTicketsByUserId
+  getTicketsByUserId,
+  createTicket
 };
 
 export default ticketsService;

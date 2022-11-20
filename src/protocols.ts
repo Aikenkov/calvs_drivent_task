@@ -9,7 +9,7 @@ export type ViaCEPAddress = {
   bairro: string,
   localidade: string,
   uf: string,
-
+  
 };
 
 export type AddressEnrollment = {
