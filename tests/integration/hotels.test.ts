@@ -1,7 +1,5 @@
 import app, { init } from "@/app";
-import { prisma } from "@/config";
 import { TicketStatus } from "@prisma/client";
-import { generateCPF, getStates } from "@brazilian-utils/brazilian-utils";
 import faker from "@faker-js/faker";
 import httpStatus from "http-status";
 import * as jwt from "jsonwebtoken";
@@ -69,6 +67,19 @@ describe("GET /hotels", () => {
       const response = await server.get("/hotels").set("Authorization", `Bearer ${token}`);
 
       expect(response.status).toEqual(httpStatus.UNAUTHORIZED);
+    });
+
+    it("should respond with empty array when there are no hotels", async () => {
+      const user = await createUser();
+      const token = await generateValidToken(user);
+      const enrollment = await createEnrollmentWithAddress(user);
+      const ticketType = await createHotelTicketType(true);
+      await createTicket(enrollment.id, ticketType.id, TicketStatus.PAID);
+
+      const response = await server.get("/hotels").set("Authorization", `Bearer ${token}`);
+
+      expect(response.status).toBe(httpStatus.OK);
+      expect(response.body).toEqual([]);
     });
 
     it("should respond with status 200 and with hotels data", async () => {
