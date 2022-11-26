@@ -14,7 +14,7 @@ export async function getHotels(req: AuthenticatedRequest, res: Response) {
     if (error.name === "UnauthorizedError") {
       return res.sendStatus(httpStatus.UNAUTHORIZED);
     }
-    return res.sendStatus(httpStatus.NO_CONTENT);
+    return res.sendStatus(httpStatus.BAD_REQUEST);
   }
 }
 
@@ -23,16 +23,20 @@ export async function getHotelWithRooms(
   res: Response,
 ) {
   const { userId } = req;
+  const hotelId = req.params.hotelId;
 
   try {
-    const hotelWithRooms = await hotelsService.getHotelWithRooms(userId);
+    const hotelWithRooms = await hotelsService.getHotelWithRooms(
+      userId,
+      Number(hotelId),
+    );
 
     return res.status(httpStatus.OK).send(hotelWithRooms);
   } catch (error) {
-    console.log(error.name);
+    console.log(error);
     if (error.name === "UnauthorizedError") {
       return res.sendStatus(httpStatus.UNAUTHORIZED);
     }
-    return res.sendStatus(httpStatus.NO_CONTENT);
+    return res.sendStatus(httpStatus.BAD_REQUEST);
   }
 }
