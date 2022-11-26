@@ -6,7 +6,11 @@ import dayjs from "dayjs";
 import httpStatus from "http-status";
 import * as jwt from "jsonwebtoken";
 import supertest from "supertest";
-import { createEnrollmentWithAddress, createUser, createhAddressWithCEP } from "../factories";
+import {
+  createEnrollmentWithAddress,
+  createUser,
+  createhAddressWithCEP,
+} from "../factories";
 import { cleanDb, generateValidToken } from "../helpers";
 
 beforeAll(async () => {
@@ -26,16 +30,23 @@ describe("GET /enrollments", () => {
   it("should respond with status 401 if given token is not valid", async () => {
     const token = faker.lorem.word();
 
-    const response = await server.get("/enrollments").set("Authorization", `Bearer ${token}`);
+    const response = await server
+      .get("/enrollments")
+      .set("Authorization", `Bearer ${token}`);
 
     expect(response.status).toBe(httpStatus.UNAUTHORIZED);
   });
 
   it("should respond with status 401 if there is no session for given token", async () => {
     const userWithoutSession = await createUser();
-    const token = jwt.sign({ userId: userWithoutSession.id }, process.env.JWT_SECRET);
+    const token = jwt.sign(
+      { userId: userWithoutSession.id },
+      process.env.JWT_SECRET,
+    );
 
-    const response = await server.get("/enrollments").set("Authorization", `Bearer ${token}`);
+    const response = await server
+      .get("/enrollments")
+      .set("Authorization", `Bearer ${token}`);
 
     expect(response.status).toBe(httpStatus.UNAUTHORIZED);
   });
@@ -44,7 +55,9 @@ describe("GET /enrollments", () => {
     it("should respond with status 204 when there is no enrollment for given user", async () => {
       const token = await generateValidToken();
 
-      const response = await server.get("/enrollments").set("Authorization", `Bearer ${token}`);
+      const response = await server
+        .get("/enrollments")
+        .set("Authorization", `Bearer ${token}`);
 
       expect(response.status).toBe(httpStatus.NO_CONTENT);
     });
@@ -54,7 +67,9 @@ describe("GET /enrollments", () => {
       const enrollment = await createEnrollmentWithAddress(user);
       const token = await generateValidToken(user);
 
-      const response = await server.get("/enrollments").set("Authorization", `Bearer ${token}`);
+      const response = await server
+        .get("/enrollments")
+        .set("Authorization", `Bearer ${token}`);
 
       expect(response.status).toBe(httpStatus.OK);
       expect(response.body).toEqual({
@@ -103,16 +118,23 @@ describe("POST /enrollments", () => {
   it("should respond with status 401 if given token is not valid", async () => {
     const token = faker.lorem.word();
 
-    const response = await server.post("/enrollments").set("Authorization", `Bearer ${token}`);
+    const response = await server
+      .post("/enrollments")
+      .set("Authorization", `Bearer ${token}`);
 
     expect(response.status).toBe(httpStatus.UNAUTHORIZED);
   });
 
   it("should respond with status 401 if there is no session for given token", async () => {
     const userWithoutSession = await createUser();
-    const token = jwt.sign({ userId: userWithoutSession.id }, process.env.JWT_SECRET);
+    const token = jwt.sign(
+      { userId: userWithoutSession.id },
+      process.env.JWT_SECRET,
+    );
 
-    const response = await server.post("/enrollments").set("Authorization", `Bearer ${token}`);
+    const response = await server
+      .post("/enrollments")
+      .set("Authorization", `Bearer ${token}`);
 
     expect(response.status).toBe(httpStatus.UNAUTHORIZED);
   });
@@ -121,7 +143,9 @@ describe("POST /enrollments", () => {
     it("should respond with status 400 when body is not present", async () => {
       const token = await generateValidToken();
 
-      const response = await server.post("/enrollments").set("Authorization", `Bearer ${token}`);
+      const response = await server
+        .post("/enrollments")
+        .set("Authorization", `Bearer ${token}`);
 
       expect(response.status).toBe(httpStatus.BAD_REQUEST);
     });
@@ -130,7 +154,10 @@ describe("POST /enrollments", () => {
       const token = await generateValidToken();
       const body = { [faker.lorem.word()]: faker.lorem.word() };
 
-      const response = await server.post("/enrollments").set("Authorization", `Bearer ${token}`).send(body);
+      const response = await server
+        .post("/enrollments")
+        .set("Authorization", `Bearer ${token}`)
+        .send(body);
 
       expect(response.status).toBe(httpStatus.BAD_REQUEST);
     });
@@ -156,10 +183,15 @@ describe("POST /enrollments", () => {
         const body = generateValidBody();
         const token = await generateValidToken();
 
-        const response = await server.post("/enrollments").set("Authorization", `Bearer ${token}`).send(body);
+        const response = await server
+          .post("/enrollments")
+          .set("Authorization", `Bearer ${token}`)
+          .send(body);
 
         expect(response.status).toBe(httpStatus.OK);
-        const enrollment = await prisma.enrollment.findFirst({ where: { cpf: body.cpf } });
+        const enrollment = await prisma.enrollment.findFirst({
+          where: { cpf: body.cpf },
+        });
         expect(enrollment).toBeDefined();
       });
 
@@ -169,11 +201,18 @@ describe("POST /enrollments", () => {
         const body = generateValidBody();
         const token = await generateValidToken(user);
 
-        const response = await server.post("/enrollments").set("Authorization", `Bearer ${token}`).send(body);
+        const response = await server
+          .post("/enrollments")
+          .set("Authorization", `Bearer ${token}`)
+          .send(body);
 
         expect(response.status).toBe(httpStatus.OK);
-        const updatedEnrollment = await prisma.enrollment.findUnique({ where: { userId: user.id } });
-        const addresses = await prisma.address.findMany({ where: { enrollmentId: enrollment.id } });
+        const updatedEnrollment = await prisma.enrollment.findUnique({
+          where: { userId: user.id },
+        });
+        const addresses = await prisma.address.findMany({
+          where: { enrollmentId: enrollment.id },
+        });
         expect(addresses.length).toEqual(1);
         expect(updatedEnrollment).toBeDefined();
         expect(updatedEnrollment).toEqual(
@@ -208,7 +247,10 @@ describe("POST /enrollments", () => {
         const body = generateInvalidBody();
         const token = await generateValidToken();
 
-        const response = await server.post("/enrollments").set("Authorization", `Bearer ${token}`).send(body);
+        const response = await server
+          .post("/enrollments")
+          .set("Authorization", `Bearer ${token}`)
+          .send(body);
 
         expect(response.status).toBe(httpStatus.BAD_REQUEST);
       });
