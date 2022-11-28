@@ -3,11 +3,15 @@ import enrollmentsService from "@/services/enrollments-service";
 import { Response } from "express";
 import httpStatus from "http-status";
 
-export async function getEnrollmentByUser(req: AuthenticatedRequest, res: Response) {
+export async function getEnrollmentByUser(
+  req: AuthenticatedRequest,
+  res: Response,
+) {
   const { userId } = req;
 
   try {
-    const enrollmentWithAddress = await enrollmentsService.getOneWithAddressByUserId(userId);
+    const enrollmentWithAddress =
+      await enrollmentsService.getOneWithAddressByUserId(userId);
 
     return res.status(httpStatus.OK).send(enrollmentWithAddress);
   } catch (error) {
@@ -15,7 +19,10 @@ export async function getEnrollmentByUser(req: AuthenticatedRequest, res: Respon
   }
 }
 
-export async function postCreateOrUpdateEnrollment(req: AuthenticatedRequest, res: Response) {
+export async function postCreateOrUpdateEnrollment(
+  req: AuthenticatedRequest,
+  res: Response,
+) {
   try {
     await enrollmentsService.createOrUpdateEnrollmentWithAddress({
       ...req.body,
@@ -28,7 +35,10 @@ export async function postCreateOrUpdateEnrollment(req: AuthenticatedRequest, re
   }
 }
 
-export async function getAddressFromCEP(req: AuthenticatedRequest, res: Response) {
+export async function getAddressFromCEP(
+  req: AuthenticatedRequest,
+  res: Response,
+) {
   const { cep } = req.query as Record<string, string>;
 
   try {
