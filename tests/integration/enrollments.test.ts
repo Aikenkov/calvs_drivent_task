@@ -65,8 +65,8 @@ describe("GET /enrollments", () => {
     it("should respond with status 200 and enrollment data with address when there is a enrollment for given user", async () => {
       const user = await createUser();
       const enrollment = await createEnrollmentWithAddress(user);
+      const address = enrollment.Address;
       const token = await generateValidToken(user);
-
       const response = await server
         .get("/enrollments")
         .set("Authorization", `Bearer ${token}`);
@@ -79,14 +79,14 @@ describe("GET /enrollments", () => {
         birthday: enrollment.birthday.toISOString(),
         phone: enrollment.phone,
         address: {
-          id: enrollment.Address[0].id,
-          cep: enrollment.Address[0].cep,
-          street: enrollment.Address[0].street,
-          city: enrollment.Address[0].city,
-          state: enrollment.Address[0].state,
-          number: enrollment.Address[0].number,
-          neighborhood: enrollment.Address[0].neighborhood,
-          addressDetail: enrollment.Address[0].addressDetail,
+          id: address.id,
+          cep: address.cep,
+          street: address.street,
+          city: address.city,
+          state: address.state,
+          number: address.number,
+          neighborhood: address.neighborhood,
+          addressDetail: address.addressDetail,
         },
       });
     });

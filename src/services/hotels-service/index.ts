@@ -6,11 +6,12 @@ import hotelRepository from "@/repositories/hotel-repository";
 
 async function verifyUser(userId: number) {
   const enrollment = await enrollmentRepository.findWithAddressByUserId(userId);
-  const ticket = await ticketRepository.findTicketByEnrollmentId(enrollment.id);
-  const payment = await paymentRepository.findPaymentByTicketId(ticket.id);
   if (!enrollment) {
     throw notFoundError();
   }
+  const ticket = await ticketRepository.findTicketByEnrollmentId(enrollment.id);
+  const payment = await paymentRepository.findPaymentByTicketId(ticket.id);
+
   if (
     !ticket ||
     ticket.TicketType.isRemote === true ||
@@ -30,7 +31,6 @@ async function getHotels(userId: number) {
 async function getHotelWithRooms(userId: number, hotelId: number) {
   await verifyUser(userId);
   const hotelRoom = await hotelRepository.findHotelRooms(hotelId);
-  console.log(hotelRoom);
 
   return hotelRoom;
 }

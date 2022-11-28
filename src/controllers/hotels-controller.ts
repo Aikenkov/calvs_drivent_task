@@ -14,7 +14,7 @@ export async function getHotels(req: AuthenticatedRequest, res: Response) {
     if (error.name === "UnauthorizedError") {
       return res.sendStatus(httpStatus.UNAUTHORIZED);
     }
-    return res.sendStatus(httpStatus.BAD_REQUEST);
+    return res.sendStatus(httpStatus.NO_CONTENT);
   }
 }
 
@@ -33,10 +33,9 @@ export async function getHotelWithRooms(
 
     return res.status(httpStatus.OK).send(hotelWithRooms);
   } catch (error) {
-    console.log(error);
     if (error.name === "UnauthorizedError") {
       return res.sendStatus(httpStatus.UNAUTHORIZED);
     }
-    return res.sendStatus(httpStatus.BAD_REQUEST);
+    return res.sendStatus(httpStatus.NO_CONTENT);
   }
 }
