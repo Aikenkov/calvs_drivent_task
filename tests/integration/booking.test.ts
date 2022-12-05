@@ -148,7 +148,7 @@ describe("POST /booking", () => {
     expect(response.status).toBe(httpStatus.UNAUTHORIZED);
   });
 
-  describe.only("when token is valid", () => {
+  describe("when token is valid", () => {
     it("should respond with status 400 when body is not present", async () => {
       const token = await generateValidToken();
 
@@ -326,7 +326,6 @@ describe("POST /booking", () => {
           roomId: createdRoom.id,
         });
 
-      console.log(createdRoom.id);
       const createdBooking = await prisma.booking.findFirst();
 
       expect(response.status).toEqual(httpStatus.OK);
@@ -453,7 +452,7 @@ describe("PUT /booking", () => {
 
       const updatedBooking = await prisma.booking.findFirst({
         where: {
-          id: newRoom.id,
+          roomId: newRoom.id,
         },
       });
 
